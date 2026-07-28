@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "hooks": {
+    "stop": [
+      {
+        "command": "node C:/tools/React_TaskSolver/dist/hooks/orchestrate-stop.js"
+      }
+    ]
+  }
+}

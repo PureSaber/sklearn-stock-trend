@@ -1,0 +1,45 @@
+# 多标的 XGBoost 批量验证
+symbol: "000001.SZ"
+start_date: "2020-01-01"
+end_date: "2024-12-31"
+
+label:
+  forward_days: 5
+  threshold: 0.0
+
+features:
+  rsi_window: 14
+  ma_windows: [5, 20, 60]
+  use_macd: true
+  macd:
+    fast: 12
+    slow: 26
+    signal: 9
+
+tuning:
+  enabled: false
+
+model:
+  type: xgboost
+  test_size: 0.2
+  random_state: 42
+  n_estimators: 80
+  max_depth: 5
+  learning_rate: 0.1
+  subsample: 0.8
+  colsample_bytree: 0.8
+
+backtest:
+  strategy: long_flat
+  signal_mode: probability
+  proba_threshold: 0.65
+  benchmark: "000300.SH"
+  commission_rate: 0.0003
+  slippage: 0.0001
+  save_plot: false
+
+walkforward:
+  n_splits: 5
+  min_train_size: 200
+
+output_dir: outputs/

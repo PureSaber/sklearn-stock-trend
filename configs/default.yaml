@@ -1,0 +1,61 @@
+symbol: "000001.SZ"
+start_date: "2020-01-01"
+end_date: "2024-12-31"
+
+# 标签：未来 N 日收益率 > threshold 为 1，否则为 0
+label:
+  forward_days: 5
+  threshold: 0.0
+
+# 特征窗口
+features:
+  rsi_window: 14
+  ma_windows: [5, 20, 60]
+  use_macd: true
+  macd:
+    fast: 12
+    slow: 26
+    signal: 9
+
+# 时序交叉验证调参（在训练集上）
+tuning:
+  enabled: true
+  cv_mode: purged
+  n_splits: 5
+  embargo_days: 5
+  label_horizon: 5
+  scoring: f1_macro
+  param_grid:
+    max_depth: [4, 6, 8, 12]
+    min_samples_leaf: [5, 10, 20]
+    n_estimators: [50, 100]
+
+# 模型（tuning.enabled=true 时，下列值为 fallback，CV 结果会覆盖）
+model:
+  type: random_forest
+  test_size: 0.2
+  random_state: 42
+  n_estimators: 100
+  max_depth: 8
+  min_samples_leaf: 10
+
+# 回测（策略在测试集上 long-flat）
+backtest:
+  strategy: long_flat
+  signal_mode: probability
+  proba_threshold: 0.65
+  benchmark: "000300.SH"
+  commission_rate: 0.0003
+  slippage: 0.0001
+  save_plot: true
+
+walkforward:
+  n_splits: 5
+  min_train_size: 200
+  tune_per_fold: false
+
+signals:
+  export: true
+
+# 输出
+output_dir: outputs/

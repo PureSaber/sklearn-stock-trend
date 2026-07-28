@@ -1,0 +1,40 @@
+# 标签过滤：仅未来5日涨幅 > 2% 标为涨
+symbol: "000001.SZ"
+start_date: "2020-01-01"
+end_date: "2024-12-31"
+
+label:
+  forward_days: 5
+  threshold: 0.02
+
+features:
+  rsi_window: 14
+  ma_windows: [5, 20, 60]
+  use_macd: true
+  macd:
+    fast: 12
+    slow: 26
+    signal: 9
+
+tuning:
+  enabled: true
+  n_splits: 5
+  scoring: f1_macro
+  param_grid:
+    max_depth: [4, 6, 8]
+    min_samples_leaf: [10, 20]
+    n_estimators: [50]
+
+model:
+  type: random_forest
+  test_size: 0.2
+  random_state: 42
+
+backtest:
+  strategy: long_flat
+  signal_mode: probability
+  proba_threshold: 0.55
+  benchmark: "000300.SH"
+  save_plot: false
+
+output_dir: outputs/experiments/02_label_002

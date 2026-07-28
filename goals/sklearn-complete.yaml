@@ -1,0 +1,100 @@
+id: sklearn-stock-trend-complete
+title: Complete sklearn-stock-trend with CLI, signals, reports, retail backtest, purged CV, and GitHub push
+
+max_auto_rounds: 80
+max_retries_per_task: 5
+
+tasks:
+  - id: T01_bootstrap
+    title: Baseline install and pytest pass
+    depends_on: []
+    done_when:
+      - file_exists: src/stock_trend/train.py
+      - command_passes: pip install -e ".[dev]" && pytest -q
+
+  - id: T02_cli_scripts
+    title: Add st-* console_scripts entry points
+    depends_on: [T01_bootstrap]
+    done_when:
+      - file_exists: tests/test_cli_entrypoints.py
+      - command_passes: pip install -e ".[dev]" && st-train --help
+
+  - id: T03_signals
+    title: Export proba_signals.parquet from train/backtest/walkforward
+    depends_on: [T01_bootstrap]
+    done_when:
+      - file_exists: src/stock_trend/signals.py
+      - command_passes: pytest tests/test_signals.py -q
+
+  - id: T04_report
+    title: HTML report generation integrated into backtest/walkforward
+    depends_on: [T03_signals]
+    done_when:
+      - file_exists: src/stock_trend/report.py
+      - command_passes: pytest tests/test_report.py -q
+
+  - id: T05_costs
+    title: A-share retail trading costs module
+    depends_on: [T01_bootstrap]
+    done_when:
+      - file_exists: src/stock_trend/trading_costs.py
+      - command_passes: pytest tests/test_trading_costs.py -q
+
+  - id: T06_retail_backtest
+    title: Discrete retail backtest with T+1 and lot size
+    depends_on: [T05_costs]
+    done_when:
+      - file_exists: src/stock_trend/retail_backtest.py
+      - file_exists: configs/run_retail_10k.yaml
+      - command_passes: pytest tests/test_retail_backtest.py -q
+
+  - id: T07_purged_cv
+    title: Purged + embargo time-series CV for tuning
+    depends_on: [T01_bootstrap]
+    done_when:
+      - file_exists: src/stock_trend/purged_cv.py
+      - command_passes: pytest tests/test_purged_cv.py -q
+
+  - id: T08_ci_readme
+    title: CI ruff step and README documentation
+    depends_on: [T02_cli_scripts]
+    done_when:
+      - command_passes: ruff check src tests && pytest -q
+
+  - id: T09_e2e
+    title: Offline end-to-end pipeline smoke test
+    depends_on: [T03_signals, T04_report, T06_retail_backtest, T07_purged_cv]
+    done_when:
+      - file_exists: tests/test_e2e_pipeline.py
+      - command_passes: pytest tests/test_e2e_pipeline.py -q
+
+  - id: T10_git_merge
+    title: Initial commit and merge remote README history
+    depends_on: [T08_ci_readme, T09_e2e]
+    done_when:
+      - command_passes: git log --oneline -1
+      - command_passes: git remote -v
+
+  - id: T11_push
+    title: Push to GitHub PureSaber/sklearn-stock-trend
+    depends_on: [T10_git_merge]
+    done_when:
+      - command_passes: git status
+      - command_passes: gh api repos/PureSaber/sklearn-stock-trend/contents/src/stock_trend/train.py --jq .name
+
+  - id: T12_final
+    title: Final acceptance all modules and tests
+    depends_on: [T11_push]
+    done_when:
+      - file_exists: goals/sklearn-complete.yaml
+      - file_exists: src/stock_trend/signals.py
+      - file_exists: src/stock_trend/report.py
+      - file_exists: src/stock_trend/retail_backtest.py
+      - file_exists: src/stock_trend/purged_cv.py
+      - command_passes: pip install -e ".[dev]" && ruff check src tests && pytest -q
+
+acceptance:
+  - command: pip install -e ".[dev]" && ruff check src tests && pytest -q
+  - command: st-train --help
+
+human_gates: []

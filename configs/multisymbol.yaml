@@ -1,0 +1,43 @@
+# 多标的批量回测：关闭 CV 调参以加快批量速度
+symbol: "000001.SZ"
+start_date: "2020-01-01"
+end_date: "2024-12-31"
+
+label:
+  forward_days: 5
+  threshold: 0.0
+
+features:
+  rsi_window: 14
+  ma_windows: [5, 20, 60]
+  use_macd: true
+  macd:
+    fast: 12
+    slow: 26
+    signal: 9
+
+tuning:
+  enabled: false
+
+model:
+  type: random_forest
+  test_size: 0.2
+  random_state: 42
+  n_estimators: 50
+  max_depth: 6
+  min_samples_leaf: 10
+
+backtest:
+  strategy: long_flat
+  signal_mode: probability
+  proba_threshold: 0.65
+  benchmark: "000300.SH"
+  commission_rate: 0.0003
+  slippage: 0.0001
+  save_plot: false
+
+walkforward:
+  n_splits: 5
+  min_train_size: 200
+
+output_dir: outputs/

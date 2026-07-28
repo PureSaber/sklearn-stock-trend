@@ -1,0 +1,51 @@
+# 多标的 + 集成模型 + 按标的调 proba 阈值
+symbol: "000001.SZ"
+start_date: "2020-01-01"
+end_date: "2024-12-31"
+
+label:
+  forward_days: 5
+  threshold: 0.0
+
+features:
+  rsi_window: 14
+  ma_windows: [5, 20, 60]
+  use_macd: true
+  macd:
+    fast: 12
+    slow: 26
+    signal: 9
+
+tuning:
+  enabled: false
+
+symbol_tuning:
+  tune_proba_threshold: true
+  val_ratio: 0.2
+  proba_thresholds: [0.55, 0.60, 0.65, 0.70, 0.75]
+
+model:
+  type: ensemble
+  test_size: 0.2
+  random_state: 42
+  members: [random_forest, xgboost]
+  weights: [0.5, 0.5]
+  random_forest:
+    n_estimators: 50
+    max_depth: 6
+    min_samples_leaf: 10
+  xgboost:
+    n_estimators: 80
+    max_depth: 5
+    learning_rate: 0.1
+
+backtest:
+  strategy: long_flat
+  signal_mode: probability
+  proba_threshold: 0.65
+  benchmark: "000300.SH"
+  commission_rate: 0.0003
+  slippage: 0.0001
+  save_plot: false
+
+output_dir: outputs/
