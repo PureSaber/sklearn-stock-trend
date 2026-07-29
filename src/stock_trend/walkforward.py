@@ -63,8 +63,8 @@ def run_walkforward(config: dict, output_dir: Path | None = None) -> dict:
         fold_model_cfg = dict(model_cfg)
         fold_info: dict = {
             "fold": fold,
-            "train_size": int(len(train_idx)),
-            "test_size": int(len(test_idx)),
+            "train_size": len(train_idx),
+            "test_size": len(test_idx),
         }
 
         if tune_per_fold and tuning_cfg.get("enabled", False):
@@ -175,7 +175,7 @@ def run_walkforward(config: dict, output_dir: Path | None = None) -> dict:
         "method": "walk_forward_expanding",
         "tune_per_fold": tune_per_fold,
         "n_splits": n_splits,
-        "oos_days": int(len(oos)),
+        "oos_days": len(oos),
         "folds": fold_metrics,
         "strategy": strategy_metrics,
         "buy_and_hold": buy_hold_metrics,

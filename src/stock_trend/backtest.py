@@ -194,7 +194,7 @@ def run_backtest(config: dict, output_dir: Path | None = None) -> dict:
         "test_period": {
             "start": str(signal_frame["date"].iloc[0].date()),
             "end": str(signal_frame["date"].iloc[-1].date()),
-            "days": int(len(signal_frame)),
+            "days": len(signal_frame),
         },
         "strategy": strategy_metrics,
         "buy_and_hold": buy_hold_metrics,

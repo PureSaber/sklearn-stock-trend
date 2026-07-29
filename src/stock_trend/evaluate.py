@@ -38,7 +38,7 @@ def evaluate_model(model, X_test, y_test) -> dict:
         "classification_report": report,
         "classification_report_text": classification_report(y_test, y_pred, digits=4),
         "confusion_matrix": confusion_matrix(y_test, y_pred).tolist(),
-        "test_samples": int(len(y_test)),
+        "test_samples": len(y_test),
     }
 
 
