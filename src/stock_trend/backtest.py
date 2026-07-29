@@ -13,12 +13,11 @@ from stock_trend.config import load_config
 from stock_trend.data import load_or_fetch_benchmark
 from stock_trend.dataset import prepare_dataset
 from stock_trend.evaluate import load_model_artifacts
+from stock_trend.metrics import compute_performance_metrics
 from stock_trend.report import write_html_report
 from stock_trend.retail_backtest import run_retail_backtest
 from stock_trend.signals import build_signal_frame as build_proba_frame
 from stock_trend.signals import default_signals_path, export_proba_signals
-
-from stock_trend.metrics import compute_performance_metrics
 
 
 def generate_signals(model, X_test: pd.DataFrame, backtest_cfg: dict) -> np.ndarray:
