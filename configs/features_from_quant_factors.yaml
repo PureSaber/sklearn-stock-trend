@@ -1,0 +1,22 @@
+# Optional bridge: pull feature column names from quant-factors outputs
+model:
+  type: random_forest
+  random_state: 42
+  n_estimators: 50
+  max_depth: 4
+
+features:
+  source: quant_factors
+  columns:
+    - momentum_20d
+    - reversal_5d
+    - volatility_20d
+    - turnover_20d
+
+labels:
+  forward_days: 5
+
+data:
+  symbol: "000001"
+  start_date: "2023-01-01"
+  end_date: "2024-01-01"
